@@ -21,9 +21,16 @@ app.post('/build', async (req, res) => {
  
   console.log(code);
   const ret = fs.writeFileSync(fileName, code);
-  const { stdout } = execSync(`bin/compiler ${filename}`);
-    
-  console.log(stdout);
+  try {
+    execSync(`compiler/compiler ${fileName}`);
+  } catch(e) {
+    res.status(400).send({msg: e.stdout.toString()});
+  }
+
+  const cat = execSync(`cat output.asm`);
+  const run = execSync('./a.out');
+  console.log(cat.stdout);
+  console.log(run.stdout);
   res.status(200).send("OK");
 });
 
